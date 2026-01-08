@@ -1,8 +1,22 @@
 import { OllamaSettings } from "model/OllamaSettings";
+import { DEFAULT_PROVIDER_CONFIG } from "../providers/ProviderManager";
 
 export const DEFAULT_SETTINGS: OllamaSettings = {
+  // Legacy settings
   ollamaUrl: "http://localhost:11434",
   defaultModel: "llama2",
+  
+  // Multi-provider settings
+  providers: DEFAULT_PROVIDER_CONFIG,
+  activeProvider: "ollama",
+  
+  // Chat settings
+  chatSystemPrompt: "You are a helpful AI assistant integrated into Obsidian. Help the user with their notes and questions. Be concise and helpful.",
+  chatTemperature: 0.7,
+  chatMaxTokens: 4096,
+  saveHistory: true,
+  
+  // Commands
   commands: [
     {
       name: "Summarize selection",

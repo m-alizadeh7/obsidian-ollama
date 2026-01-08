@@ -1,5 +1,6 @@
 /**
  * Chat View - Main chat interface like VS Code Copilot
+ * Supports multiple AI providers
  */
 
 import { 
@@ -8,16 +9,17 @@ import {
   setIcon,
   MarkdownRenderer,
   TFile,
+  Notice,
 } from 'obsidian';
-import { ChatMessage, ChatSession } from '../model/AIProvider';
-import { OllamaProvider } from '../providers/OllamaProvider';
+import { ChatMessage, ChatSession, AIProvider } from '../model/AIProvider';
+import { ProviderManager } from '../providers/ProviderManager';
 import type { Ollama } from '../Ollama';
 
 export const CHAT_VIEW_TYPE = 'ollama-chat-view';
 
 export class ChatView extends ItemView {
   private plugin: Ollama;
-  private provider: OllamaProvider;
+  private providerManager: ProviderManager;
   private session: ChatSession;
   private messagesContainer: HTMLElement;
   private inputContainer: HTMLElement;
@@ -25,6 +27,7 @@ export class ChatView extends ItemView {
   private sendButton: HTMLButtonElement;
   private cancelButton: HTMLButtonElement;
   private modelSelect: HTMLSelectElement;
+  private providerSelect: HTMLSelectElement;
   private attachButton: HTMLButtonElement;
   private attachedNote: { path: string; content: string } | null = null;
   private currentAbortController: AbortController | null = null;
@@ -33,10 +36,8 @@ export class ChatView extends ItemView {
   constructor(leaf: WorkspaceLeaf, plugin: Ollama) {
     super(leaf);
     this.plugin = plugin;
-    this.provider = new OllamaProvider(
-      plugin.settings.ollamaUrl,
-      plugin.settings.defaultModel
-    );
+    this.providerManager = new ProviderManager(plugin.settings.providers);
+    this.providerManager.setActiveProvider(plugin.settings.activeProvider);
     this.session = this.createNewSession();
   }
 
@@ -58,7 +59,7 @@ export class ChatView extends ItemView {
       title: 'New Chat',
       messages: [],
       model: this.plugin.settings.defaultModel,
-      provider: 'ollama',
+      provider: this.providerManager.getActiveProviderId(),
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -83,7 +84,8 @@ export class ChatView extends ItemView {
     this.inputContainer = container.createDiv({ cls: 'ollama-chat-input-container' });
     this.createInputArea(this.inputContainer);
 
-    // Load models
+    // Load providers and models
+    await this.loadProviders();
     await this.loadModels();
   }
 
@@ -96,6 +98,14 @@ export class ChatView extends ItemView {
 
     // Controls
     const controls = header.createDiv({ cls: 'ollama-chat-controls' });
+
+    // Provider selector
+    this.providerSelect = controls.createEl('select', { cls: 'ollama-provider-select' });
+    this.providerSelect.addEventListener('change', async () => {
+      this.providerManager.setActiveProvider(this.providerSelect.value);
+      this.session.provider = this.providerSelect.value;
+      await this.loadModels();
+    });
 
     // Model selector
     this.modelSelect = controls.createEl('select', { cls: 'ollama-model-select' });
@@ -172,8 +182,25 @@ export class ChatView extends ItemView {
     this.cancelButton.addEventListener('click', () => this.cancelGeneration());
   }
 
+  private async loadProviders() {
+    this.providerSelect.empty();
+    
+    const providerInfo = this.providerManager.getProviderInfo();
+    for (const info of providerInfo) {
+      if (info.available) {
+        this.providerSelect.createEl('option', { 
+          value: info.id, 
+          text: info.name 
+        });
+      }
+    }
+    
+    this.providerSelect.value = this.providerManager.getActiveProviderId();
+  }
+
   private async loadModels() {
-    const models = await this.provider.getModels();
+    const provider = this.providerManager.getActiveProvider();
+    const models = await provider.getModels();
     this.modelSelect.empty();
     
     for (const model of models) {
@@ -181,7 +208,10 @@ export class ChatView extends ItemView {
     }
     
     // Set default
-    this.modelSelect.value = this.session.model;
+    if (models.length > 0) {
+      this.session.model = models[0];
+      this.modelSelect.value = models[0];
+    }
   }
 
   private addWelcomeMessage() {
@@ -304,8 +334,11 @@ export class ChatView extends ItemView {
     this.cancelButton.style.display = 'flex';
     this.isGenerating = true;
 
+    // Get active provider
+    const provider = this.providerManager.getActiveProvider();
+
     // Start streaming
-    this.currentAbortController = this.provider.chat(
+    this.currentAbortController = provider.chat(
       this.session.messages.slice(0, -1).map(m => ({
         role: m.role,
         content: m.attachedNote 
@@ -333,7 +366,11 @@ export class ChatView extends ItemView {
           this.finishGeneration(messageEl);
         }
       },
-      { temperature: 0.7 }
+      { 
+        temperature: this.plugin.settings.chatTemperature,
+        systemPrompt: this.plugin.settings.chatSystemPrompt,
+        maxTokens: this.plugin.settings.chatMaxTokens,
+      }
     );
   }
 
@@ -457,11 +494,8 @@ export class ChatView extends ItemView {
   }
 
   private showNotice(message: string) {
-    // Use Obsidian's Notice if available
-    const Notice = (this.app as any).Notice || window.Notice;
-    if (Notice) {
-      new Notice(message);
-    }
+    // Use Obsidian's Notice 
+    new Notice(message);
   }
 
   async onClose() {

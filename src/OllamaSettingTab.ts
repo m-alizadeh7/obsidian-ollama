@@ -16,33 +16,231 @@ export class OllamaSettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
+    // ===== AI Providers Section =====
+    containerEl.createEl("h2", { text: "🤖 AI Providers" });
+
+    // Ollama Settings
+    containerEl.createEl("h3", { text: "🦙 Ollama (Local)" });
+    
+    new Setting(containerEl)
+      .setName("Enable Ollama")
+      .setDesc("Use local Ollama for AI generation")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.providers.ollama.enabled)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.ollama.enabled = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
     new Setting(containerEl)
       .setName("Ollama URL")
       .setDesc("URL of the Ollama server (e.g. http://localhost:11434)")
       .addText((text) =>
         text
           .setPlaceholder("http://localhost:11434")
-          .setValue(this.plugin.settings.ollamaUrl)
+          .setValue(this.plugin.settings.providers.ollama.url)
           .onChange(async (value) => {
-            this.plugin.settings.ollamaUrl = value;
+            this.plugin.settings.providers.ollama.url = value;
+            this.plugin.settings.ollamaUrl = value; // Legacy
             await this.plugin.saveSettings();
           })
       );
 
     new Setting(containerEl)
-      .setName("default model")
-      .setDesc("Name of the default ollama model to use for prompts")
+      .setName("Default Ollama Model")
+      .setDesc("Name of the default ollama model to use")
       .addText((text) =>
         text
           .setPlaceholder("llama2")
-          .setValue(this.plugin.settings.defaultModel)
+          .setValue(this.plugin.settings.providers.ollama.defaultModel)
           .onChange(async (value) => {
-            this.plugin.settings.defaultModel = value;
+            this.plugin.settings.providers.ollama.defaultModel = value;
+            this.plugin.settings.defaultModel = value; // Legacy
             await this.plugin.saveSettings();
           })
       );
 
-    containerEl.createEl("h3", { text: "Commands" });
+    // OpenAI Settings
+    containerEl.createEl("h3", { text: "🤖 OpenAI (GPT)" });
+    
+    new Setting(containerEl)
+      .setName("Enable OpenAI")
+      .setDesc("Use OpenAI GPT models")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.providers.openai.enabled)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.openai.enabled = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("OpenAI API Key")
+      .setDesc("Your OpenAI API key from platform.openai.com")
+      .addText((text) =>
+        text
+          .setPlaceholder("sk-...")
+          .setValue(this.plugin.settings.providers.openai.apiKey)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.openai.apiKey = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("OpenAI Model")
+      .setDesc("Default OpenAI model to use")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("gpt-4o", "GPT-4o")
+          .addOption("gpt-4o-mini", "GPT-4o Mini")
+          .addOption("gpt-4-turbo", "GPT-4 Turbo")
+          .addOption("gpt-4", "GPT-4")
+          .addOption("gpt-3.5-turbo", "GPT-3.5 Turbo")
+          .setValue(this.plugin.settings.providers.openai.defaultModel)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.openai.defaultModel = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    // Anthropic Settings
+    containerEl.createEl("h3", { text: "🧠 Anthropic (Claude)" });
+    
+    new Setting(containerEl)
+      .setName("Enable Anthropic")
+      .setDesc("Use Anthropic Claude models")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.providers.anthropic.enabled)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.anthropic.enabled = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Anthropic API Key")
+      .setDesc("Your Anthropic API key from console.anthropic.com")
+      .addText((text) =>
+        text
+          .setPlaceholder("sk-ant-...")
+          .setValue(this.plugin.settings.providers.anthropic.apiKey)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.anthropic.apiKey = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Anthropic Model")
+      .setDesc("Default Claude model to use")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("claude-3-opus-20240229", "Claude 3 Opus")
+          .addOption("claude-3-sonnet-20240229", "Claude 3 Sonnet")
+          .addOption("claude-3-haiku-20240307", "Claude 3 Haiku")
+          .setValue(this.plugin.settings.providers.anthropic.defaultModel)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.anthropic.defaultModel = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    // Groq Settings
+    containerEl.createEl("h3", { text: "⚡ Groq (Fast)" });
+    
+    new Setting(containerEl)
+      .setName("Enable Groq")
+      .setDesc("Use Groq for ultra-fast inference")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.providers.groq.enabled)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.groq.enabled = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Groq API Key")
+      .setDesc("Your Groq API key from console.groq.com")
+      .addText((text) =>
+        text
+          .setPlaceholder("gsk_...")
+          .setValue(this.plugin.settings.providers.groq.apiKey)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.groq.apiKey = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Groq Model")
+      .setDesc("Default Groq model to use")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("llama2-70b-4096", "LLaMA2 70B")
+          .addOption("mixtral-8x7b-32768", "Mixtral 8x7B")
+          .addOption("gemma-7b-it", "Gemma 7B")
+          .setValue(this.plugin.settings.providers.groq.defaultModel)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.groq.defaultModel = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    // ===== Chat Settings Section =====
+    containerEl.createEl("h2", { text: "💬 Chat Settings" });
+
+    new Setting(containerEl)
+      .setName("System Prompt")
+      .setDesc("Custom system prompt for the chat assistant")
+      .addTextArea((text) => {
+        text
+          .setPlaceholder("You are a helpful AI assistant...")
+          .setValue(this.plugin.settings.chatSystemPrompt)
+          .onChange(async (value) => {
+            this.plugin.settings.chatSystemPrompt = value;
+            await this.plugin.saveSettings();
+          });
+        text.inputEl.rows = 4;
+        text.inputEl.cols = 50;
+      });
+
+    new Setting(containerEl)
+      .setName("Temperature")
+      .setDesc("Controls randomness (0 = focused, 1 = creative)")
+      .addSlider((slider) =>
+        slider
+          .setLimits(0, 1, 0.1)
+          .setValue(this.plugin.settings.chatTemperature)
+          .setDynamicTooltip()
+          .onChange(async (value) => {
+            this.plugin.settings.chatTemperature = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Max Tokens")
+      .setDesc("Maximum response length")
+      .addSlider((slider) =>
+        slider
+          .setLimits(256, 8192, 256)
+          .setValue(this.plugin.settings.chatMaxTokens)
+          .setDynamicTooltip()
+          .onChange(async (value) => {
+            this.plugin.settings.chatMaxTokens = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    // ===== Commands Section =====
+    containerEl.createEl("h2", { text: "⚡ Quick Commands" });
 
     const newCommand: OllamaCommand = {
       name: "",

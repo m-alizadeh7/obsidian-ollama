@@ -1,10 +1,10 @@
 {
   "id": "ollama",
-  "name": "Ollama",
-  "version": "0.0.1",
+  "name": "Ollama Chat",
+  "version": "1.0.0",
   "minAppVersion": "0.15.0",
-  "description": "This is a plugin for Obsidian that enables the usage of Ollama within your notes.",
-  "author": "hinterdupfinger",
-  "authorUrl": "https://github.com/hinterdupfinger",
+  "description": "AI Chat interface for Obsidian with Ollama integration. Features a Copilot-like chat panel, streaming responses, note attachment, and customizable prompts.",
+  "author": "m-alizadeh7",
+  "authorUrl": "https://github.com/m-alizadeh7",
   "isDesktopOnly": true
 }

@@ -1,7 +1,7 @@
 {
   "name": "obsidian-ollama",
-  "version": "0.0.1",
-  "description": "This is a Ollama (https://ollama.ai) plugin for Obsidian (https://obsidian.md)",
+  "version": "1.0.0",
+  "description": "AI Chat interface for Obsidian with Ollama integration. Features a Copilot-like chat panel, streaming responses, note attachment, and customizable prompts.",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
@@ -13,9 +13,12 @@
     "ollama",
     "ai",
     "plugin",
-    "llama"
+    "llama",
+    "chat",
+    "copilot",
+    "assistant"
   ],
-  "author": "hinterdupfinger",
+  "author": "m-alizadeh7",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "20.6.2",

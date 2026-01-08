@@ -3,12 +3,20 @@
  * A Copilot-like chat interface for Obsidian
  */
 
+/* ===== RTL Support (Persian/Arabic) ===== */
+.ollama-chat-container[dir="rtl"],
+.ollama-chat-container.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
 /* ===== Chat Container ===== */
 .ollama-chat-container {
   display: flex;
   flex-direction: column;
   height: 100%;
   background: var(--background-primary);
+  overflow: hidden;
 }
 
 /* ===== Header ===== */
@@ -379,4 +387,153 @@
 
 .ollama-chat-messages::-webkit-scrollbar-thumb:hover {
   background: var(--background-modifier-border-hover);
+}
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .ollama-chat-header {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+  }
+
+  .ollama-chat-title {
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .ollama-model-select {
+    font-size: 11px;
+    padding: 3px 6px;
+    max-width: 120px;
+  }
+
+  .ollama-chat-controls {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .ollama-message-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .ollama-message-content {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .ollama-message-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ollama-message-actions button {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .ollama-chat-input-area {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .ollama-chat-input {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .ollama-send-button {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .ollama-attachment-section {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .ollama-attachment-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .ollama-selected-notes {
+    gap: 4px;
+  }
+
+  .ollama-note-badge {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ollama-chat-header {
+    padding: 8px 10px;
+  }
+
+  .ollama-chat-title {
+    font-size: 12px;
+    min-width: 100%;
+  }
+
+  .ollama-chat-controls {
+    width: 100%;
+  }
+
+  .ollama-model-select {
+    flex: 1;
+    max-width: none;
+  }
+
+  .ollama-message {
+    margin: 8px 0;
+    padding: 8px 10px;
+  }
+
+  .ollama-message-body {
+    gap: 6px;
+  }
+
+  .ollama-message-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .ollama-message-content {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .ollama-chat-input-area {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .ollama-chat-input {
+    font-size: 12px;
+    padding: 6px 8px;
+    min-height: 36px;
+  }
+
+  .ollama-send-button {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .ollama-attachment-section {
+    padding: 6px 8px;
+  }
+
+  .ollama-attachment-btn {
+    padding: 5px 6px;
+    font-size: 10px;
+  }
+
+  .ollama-note-badge {
+    padding: 2px 4px;
+    font-size: 10px;
+  }
 }

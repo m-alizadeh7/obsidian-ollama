@@ -7,6 +7,7 @@ import { OllamaProvider } from './OllamaProvider';
 import { OpenAIProvider } from './OpenAIProvider';
 import { AnthropicProvider } from './AnthropicProvider';
 import { GroqProvider } from './GroqProvider';
+import { GeminiProvider } from './GeminiProvider';
 
 export interface ProviderConfig {
   ollama: {
@@ -26,6 +27,11 @@ export interface ProviderConfig {
     defaultModel: string;
   };
   groq: {
+    enabled: boolean;
+    apiKey: string;
+    defaultModel: string;
+  };
+  gemini: {
     enabled: boolean;
     apiKey: string;
     defaultModel: string;
@@ -52,6 +58,11 @@ export const DEFAULT_PROVIDER_CONFIG: ProviderConfig = {
     enabled: false,
     apiKey: '',
     defaultModel: 'llama2-70b-4096',
+  },
+  gemini: {
+    enabled: false,
+    apiKey: '',
+    defaultModel: 'gemini-1.5-pro',
   },
 };
 
@@ -99,6 +110,13 @@ export class ProviderManager {
         this.config.groq.defaultModel
       );
       this.providers.set('groq', groqProvider);
+    }
+    
+    // Initialize Gemini if configured
+    if (this.config.gemini.apiKey) {
+      const geminiProvider = new GeminiProvider();
+      geminiProvider.setApiKey(this.config.gemini.apiKey);
+      this.providers.set('gemini', geminiProvider);
     }
   }
   

@@ -193,6 +193,49 @@ export class OllamaSettingTab extends PluginSettingTab {
           })
       );
 
+    // Gemini Settings
+    containerEl.createEl("h3", { text: "✨ Google Gemini" });
+    
+    new Setting(containerEl)
+      .setName("Enable Gemini")
+      .setDesc("Use Google Gemini (free tier available)")
+      .addToggle((toggle) =>
+        toggle
+          .setValue(this.plugin.settings.providers.gemini.enabled)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.gemini.enabled = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Gemini API Key")
+      .setDesc("Get your free API key from ai.google.dev")
+      .addText((text) =>
+        text
+          .setPlaceholder("AIza...")
+          .setValue(this.plugin.settings.providers.gemini.apiKey)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.gemini.apiKey = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Gemini Model")
+      .setDesc("Default Gemini model to use")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("gemini-1.5-pro", "Gemini 1.5 Pro")
+          .addOption("gemini-1.5-flash", "Gemini 1.5 Flash")
+          .addOption("gemini-pro", "Gemini Pro")
+          .setValue(this.plugin.settings.providers.gemini.defaultModel)
+          .onChange(async (value) => {
+            this.plugin.settings.providers.gemini.defaultModel = value;
+            await this.plugin.saveSettings();
+          })
+      );
+
     // ===== Chat Settings Section =====
     containerEl.createEl("h2", { text: "💬 Chat Settings" });
 

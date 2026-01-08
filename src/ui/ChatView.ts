@@ -69,6 +69,14 @@ export class ChatView extends ItemView {
     const container = this.containerEl.children[1];
     container.empty();
     container.addClass('ollama-chat-container');
+    
+    // Add RTL support for Persian/Arabic
+    const isRTL = document.documentElement.dir === 'rtl' || 
+                  window.getComputedStyle(document.documentElement).direction === 'rtl';
+    if (isRTL) {
+      container.classList.add('rtl');
+      container.setAttribute('dir', 'rtl');
+    }
 
     // Header
     const header = container.createDiv({ cls: 'ollama-chat-header' });
@@ -94,7 +102,7 @@ export class ChatView extends ItemView {
     const titleContainer = header.createDiv({ cls: 'ollama-chat-title' });
     const icon = titleContainer.createSpan({ cls: 'ollama-chat-icon' });
     setIcon(icon, 'bot');
-    titleContainer.createSpan({ text: ' AI Assistant' });
+    titleContainer.createSpan({ text: ' Chat' });
 
     // Controls
     const controls = header.createDiv({ cls: 'ollama-chat-controls' });

@@ -46,8 +46,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
+.ollama-provider-select,
 .ollama-model-select {
   padding: 4px 8px;
   border-radius: 4px;
@@ -56,6 +58,14 @@
   color: var(--text-normal);
   font-size: 12px;
   cursor: pointer;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ollama-provider-select:hover,
+.ollama-model-select:hover {
+  border-color: var(--interactive-accent);
 }
 
 /* ===== Buttons ===== */
@@ -390,31 +400,56 @@
 }
 /* ===== Responsive Design ===== */
 @media (max-width: 768px) {
+  .ollama-chat-container {
+    height: 100%;
+  }
+
   .ollama-chat-header {
     padding: 10px 12px;
     flex-wrap: wrap;
+    gap: 8px;
   }
 
   .ollama-chat-title {
     font-size: 13px;
     gap: 6px;
+    flex-shrink: 0;
   }
 
+  .ollama-provider-select,
   .ollama-model-select {
     font-size: 11px;
     padding: 3px 6px;
     max-width: 120px;
+    flex: 1;
+    min-width: 100px;
   }
 
   .ollama-chat-controls {
     gap: 6px;
     flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .ollama-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .ollama-message {
+    margin: 8px 0;
+    padding: 8px 10px;
+  }
+
+  .ollama-message-body {
+    gap: 8px;
   }
 
   .ollama-message-avatar {
     width: 28px;
     height: 28px;
     font-size: 12px;
+    flex-shrink: 0;
   }
 
   .ollama-message-content {
@@ -469,27 +504,43 @@
 }
 
 @media (max-width: 480px) {
+  .ollama-chat-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
   .ollama-chat-header {
     padding: 8px 10px;
+    gap: 6px;
   }
 
   .ollama-chat-title {
     font-size: 12px;
-    min-width: 100%;
+    width: 100%;
+    flex-shrink: 0;
   }
 
   .ollama-chat-controls {
     width: 100%;
+    gap: 4px;
   }
 
+  .ollama-provider-select,
   .ollama-model-select {
     flex: 1;
     max-width: none;
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+
+  .ollama-btn-icon {
+    padding: 4px;
   }
 
   .ollama-message {
-    margin: 8px 0;
-    padding: 8px 10px;
+    margin: 6px 0;
+    padding: 6px 8px;
   }
 
   .ollama-message-body {
@@ -500,6 +551,7 @@
     width: 24px;
     height: 24px;
     font-size: 10px;
+    flex-shrink: 0;
   }
 
   .ollama-message-content {

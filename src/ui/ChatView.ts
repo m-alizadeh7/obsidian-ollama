@@ -13,6 +13,7 @@ import {
 } from 'obsidian';
 import { ChatMessage, ChatSession, AIProvider } from '../model/AIProvider';
 import { ProviderManager } from '../providers/ProviderManager';
+import { ChatHistoryManager } from '../data/ChatHistoryManager';
 import type { Ollama } from '../Ollama';
 
 export const CHAT_VIEW_TYPE = 'ollama-chat-view';
@@ -20,6 +21,7 @@ export const CHAT_VIEW_TYPE = 'ollama-chat-view';
 export class ChatView extends ItemView {
   private plugin: Ollama;
   private providerManager: ProviderManager;
+  private historyManager: ChatHistoryManager;
   private session: ChatSession;
   private messagesContainer: HTMLElement;
   private inputContainer: HTMLElement;
@@ -38,6 +40,7 @@ export class ChatView extends ItemView {
     this.plugin = plugin;
     this.providerManager = new ProviderManager(plugin.settings.providers);
     this.providerManager.setActiveProvider(plugin.settings.activeProvider);
+    this.historyManager = new ChatHistoryManager(plugin.app);
     this.session = this.createNewSession();
   }
 
@@ -155,7 +158,7 @@ export class ChatView extends ItemView {
     this.inputField = inputRow.createEl('textarea', {
       cls: 'ollama-chat-input',
       attr: { 
-        placeholder: 'Ask anything... (Ctrl+Enter to send)',
+        placeholder: 'Ask anything... (Enter to send, Shift+Enter for new line)',
         rows: '1'
       }
     });
@@ -166,9 +169,9 @@ export class ChatView extends ItemView {
       this.inputField.style.height = Math.min(this.inputField.scrollHeight, 150) + 'px';
     });
 
-    // Keyboard shortcuts
+    // Keyboard shortcuts: Enter to send, Shift+Enter for newline
     this.inputField.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         this.sendMessage();
       }
@@ -440,6 +443,13 @@ export class ChatView extends ItemView {
     this.currentAbortController = null;
     this.sendButton.style.display = 'flex';
     this.cancelButton.style.display = 'none';
+
+    // Save session to history
+    if (this.plugin.settings.saveHistory) {
+      this.historyManager.saveSession(this.session).catch(err => 
+        console.error('Failed to save chat history:', err)
+      );
+    }
 
     // Remove streaming indicator
     const indicator = messageEl.querySelector('.ollama-typing-indicator');

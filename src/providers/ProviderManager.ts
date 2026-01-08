@@ -187,6 +187,11 @@ export class ProviderManager {
         name: '⚡ Groq (Fast)', 
         available: this.config.groq.enabled && !!this.config.groq.apiKey 
       },
+      { 
+        id: 'gemini', 
+        name: '✨ Gemini (Google)', 
+        available: this.config.gemini.enabled && !!this.config.gemini.apiKey 
+      },
     ];
   }
 }
